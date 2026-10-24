@@ -1,79 +1,80 @@
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Item } from '../../../core/models/item.model';
 import { ExplorerStore } from '../explorer.store';
 
-export interface ItemEditDialogData {
-  item: Item;
-}
-
 @Component({
-  selector: 'app-item-edit-dialog',
+  selector: 'app-item-edit-drawer',
   imports: [
     DatePipe,
     ReactiveFormsModule,
     MatButtonModule,
-    MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
+    MatProgressSpinnerModule,
     MatSlideToggleModule,
   ],
-  templateUrl: './item-edit-dialog.html',
-  styleUrl: './item-edit-dialog.scss',
+  templateUrl: './item-edit-drawer.html',
+  styleUrl: './item-edit-drawer.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ItemEditDialog {
-  private readonly dialogRef = inject(MatDialogRef<ItemEditDialog, Item>);
-  private readonly data = inject<ItemEditDialogData>(MAT_DIALOG_DATA);
+export class ItemEditDrawer {
+  readonly item = input.required<Item>();
+  readonly saved = output<Item>();
+  readonly cancelled = output<void>();
+
   private readonly store = inject(ExplorerStore);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly item = this.data.item;
   protected readonly saving = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
-
   protected readonly form = new FormGroup({
-    price: new FormControl<number | null>(this.item.price, {
+    price: new FormControl<number | null>(null, {
       validators: [Validators.required, priceValidator],
     }),
-    available: new FormControl(this.item.available, { nonNullable: true }),
+    available: new FormControl(true, { nonNullable: true }),
   });
+
+  constructor() {
+    effect(() => {
+      const item = this.item();
+      this.form.setValue({ price: item.price, available: item.available });
+      this.errorMessage.set(null);
+    });
+  }
 
   protected save(): void {
     if (this.form.invalid || this.saving()) {
       this.form.markAllAsTouched();
       return;
     }
-
     const price = this.form.controls.price.value;
     if (price === null) {
       throw new Error('Price is required.');
     }
-
     this.saving.set(true);
     this.errorMessage.set(null);
     this.store
-      .updateItem(this.item.id, { price, available: this.form.controls.available.value })
+      .updateItem(this.item().id, { price, available: this.form.controls.available.value })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (updated) => this.dialogRef.close(updated),
+        next: (updated) => {
+          this.saving.set(false);
+          this.saved.emit(updated);
+        },
         error: (err: unknown) => {
           this.saving.set(false);
           this.errorMessage.set(readUpdateError(err));
         },
       });
-  }
-
-  protected cancel(): void {
-    this.dialogRef.close();
   }
 }
 
@@ -111,5 +112,5 @@ function readUpdateError(err: unknown): string {
   if (typeof err === 'object' && err !== null && 'message' in err && typeof err.message === 'string' && err.message) {
     return err.message;
   }
-  return 'Failed to update item';
+  return 'The item could not be saved. Check the price and try again.';
 }

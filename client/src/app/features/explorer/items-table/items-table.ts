@@ -1,27 +1,16 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Injector, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { Item } from '../../../core/models/item.model';
 import { ExplorerStore } from '../explorer.store';
-import { ItemEditDialog } from '../item-edit-dialog/item-edit-dialog';
 
 @Component({
   selector: 'app-items-table',
-  imports: [
-    DatePipe,
-    DecimalPipe,
-    MatButtonModule,
-    MatDialogModule,
-    MatIconModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatTableModule,
-  ],
+  imports: [DatePipe, DecimalPipe, MatButtonModule, MatIconModule, MatPaginatorModule, MatSortModule, MatTableModule],
   templateUrl: './items-table.html',
   styleUrl: './items-table.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,10 +18,9 @@ import { ItemEditDialog } from '../item-edit-dialog/item-edit-dialog';
 export class ItemsTable {
   readonly density = input<'comfortable' | 'compact'>('comfortable');
   readonly highlightedId = input<string | null>(null);
+  readonly editItem = output<Item>();
 
   protected readonly store = inject(ExplorerStore);
-  private readonly dialog = inject(MatDialog);
-  private readonly injector = inject(Injector);
 
   protected readonly displayedColumns = ['name', 'category', 'price', 'available', 'lastUpdated', 'actions'];
   protected readonly pageSizeOptions = [10, 25, 50, 100];
@@ -54,11 +42,7 @@ export class ItemsTable {
   }
 
   protected edit(item: Item): void {
-    this.dialog.open(ItemEditDialog, {
-      data: { item },
-      injector: this.injector,
-      width: '420px',
-    });
+    this.editItem.emit(item);
   }
 
   protected relative(iso: string): string {

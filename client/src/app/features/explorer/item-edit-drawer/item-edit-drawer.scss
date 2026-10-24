@@ -1,0 +1,67 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+  min-height: 100%;
+  padding: 24px;
+  background: var(--sh-surface);
+  color: var(--sh-ink);
+}
+
+h2 {
+  margin: 0;
+  font-family: var(--sh-display);
+  font-size: 20px;
+}
+
+header p,
+dt {
+  color: var(--sh-muted);
+}
+
+header p,
+dd,
+dt {
+  margin: 0;
+}
+
+dl {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--sh-line);
+  border-radius: var(--sh-radius-panel);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.prefix {
+  margin-right: 4px;
+  color: var(--sh-muted);
+}
+
+.banner {
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--sh-danger);
+  border-radius: var(--sh-radius);
+  color: var(--sh-danger);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+button[type='submit'] {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}

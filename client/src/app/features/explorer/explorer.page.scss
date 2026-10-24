@@ -1,3 +1,13 @@
+mat-sidenav-container {
+  background: transparent;
+}
+
+mat-sidenav {
+  width: min(420px, 100vw);
+  box-shadow: var(--sh-shadow-drawer);
+  border-left: 1px solid var(--sh-line);
+}
+
 .results {
   display: flex;
   justify-content: space-between;

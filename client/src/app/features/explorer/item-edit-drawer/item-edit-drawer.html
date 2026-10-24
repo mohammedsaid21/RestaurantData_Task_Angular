@@ -1,0 +1,67 @@
+<header>
+  <h2>{{ item().name }}</h2>
+  <p>Update the price or whether this item is available on the menu.</p>
+</header>
+
+<dl>
+  <div>
+    <dt>Id</dt>
+    <dd class="tabular">{{ item().id }}</dd>
+  </div>
+  <div>
+    <dt>Restaurant</dt>
+    <dd>{{ item().restaurantName }}</dd>
+  </div>
+  <div>
+    <dt>Branch</dt>
+    <dd>{{ item().branchName }}</dd>
+  </div>
+  <div>
+    <dt>Category</dt>
+    <dd>{{ item().category }}</dd>
+  </div>
+  <div>
+    <dt>Last updated</dt>
+    <dd class="tabular">{{ item().lastUpdated | date: 'medium' }}</dd>
+  </div>
+</dl>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+  @if (errorMessage(); as message) {
+    <p class="banner" role="alert">{{ message }}</p>
+  }
+
+  <mat-form-field appearance="outline">
+    <mat-label>Price</mat-label>
+    <span matPrefix class="prefix">$</span>
+    <input matInput type="number" formControlName="price" step="0.01" />
+    <mat-hint>Greater than 0, at most 10000, and at most two decimal places.</mat-hint>
+    @if (form.controls.price.hasError('required')) {
+      <mat-error>Enter a price.</mat-error>
+    }
+    @if (form.controls.price.hasError('number')) {
+      <mat-error>Price must be a number.</mat-error>
+    }
+    @if (form.controls.price.hasError('min')) {
+      <mat-error>Price must be greater than 0.</mat-error>
+    }
+    @if (form.controls.price.hasError('max')) {
+      <mat-error>Price must be at most 10000.</mat-error>
+    }
+    @if (form.controls.price.hasError('decimalPlaces')) {
+      <mat-error>Use at most two decimal places.</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-slide-toggle formControlName="available">Available on menu</mat-slide-toggle>
+
+  <div class="actions">
+    <button type="button" matButton="outlined" (click)="cancelled.emit()">Cancel</button>
+    <button type="submit" matButton="filled" [disabled]="form.invalid || saving()">
+      @if (saving()) {
+        <mat-spinner diameter="16" />
+      }
+      Save changes
+    </button>
+  </div>
+</form>
