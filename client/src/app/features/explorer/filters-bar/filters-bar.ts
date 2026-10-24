@@ -40,7 +40,13 @@ export class FiltersBar {
 
   constructor() {
     this.form.controls.search.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.cancelSearch), repeat(), takeUntilDestroyed())
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this.cancelSearch),
+        repeat(),
+        takeUntilDestroyed(),
+      )
       .subscribe((search) => this.store.setSearch(search));
 
     this.form.controls.restaurantId.valueChanges.pipe(takeUntilDestroyed()).subscribe((restaurantId) => {

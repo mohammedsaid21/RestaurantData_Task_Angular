@@ -55,7 +55,7 @@ export class ItemEditDialog {
 
     const price = this.form.controls.price.value;
     if (price === null) {
-      return;
+      throw new Error('Price is required.');
     }
 
     this.saving.set(true);

@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { Item, ItemsQuery } from '../../../core/models/item.model';
+import { Item } from '../../../core/models/item.model';
 import { ExplorerStore } from '../explorer.store';
 import { ItemEditDialog } from '../item-edit-dialog/item-edit-dialog';
 
@@ -53,8 +53,7 @@ export class ItemsTable {
     if (sortBy !== 'name' && sortBy !== 'price' && sortBy !== 'lastUpdated') {
       throw new Error(`Cannot sort by ${sortBy}`);
     }
-    const direction: ItemsQuery['sortOrder'] | '' = event.direction === '' ? '' : event.direction;
-    this.store.setSort(sortBy, direction);
+    this.store.setSort(sortBy, event.direction);
   }
 
   protected onPage(event: PageEvent): void {

@@ -1,5 +1,4 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Observable, Subject, of, throwError } from 'rxjs';
 import { ItemsApiService } from '../../core/api/items-api.service';
@@ -43,7 +42,6 @@ describe('ExplorerStore', () => {
 
   function flushQueries(): void {
     TestBed.flushEffects();
-    TestBed.inject(ApplicationRef).tick();
   }
 
   function createStore(): ExplorerStore {
