@@ -1,18 +1,40 @@
+<app-page-header
+  title="Explorer"
+  summary="Find one item among the full menu, then correct its price or availability."
+/>
+
 <app-filters-bar />
 
-<p class="results">Results: {{ store.total() }}</p>
+<div class="results">
+  <p aria-live="polite">{{ rangeLabel() }}</p>
+  <div class="segment" role="radiogroup" aria-label="Row density">
+    <button type="button" role="radio" [attr.aria-checked]="density() === 'comfortable'" (click)="setDensity('comfortable')">
+      Comfortable
+    </button>
+    <button type="button" role="radio" [attr.aria-checked]="density() === 'compact'" (click)="setDensity('compact')">
+      Compact
+    </button>
+  </div>
+</div>
 
-@if (store.status() === 'loading') {
-  <div class="state">
-    <mat-spinner />
+@if (store.status() === 'error') {
+  <div class="state" role="alert">
+    <p>{{ store.error() }}</p>
+    <p>The item list could not be loaded. Try the request again.</p>
+    <button type="button" matButton="filled" (click)="store.retry()">Retry</button>
   </div>
-} @else if (store.status() === 'error') {
-  <div class="state">
-    <p class="error">{{ store.error() }}</p>
-    <button type="button" mat-flat-button (click)="store.retry()">Retry</button>
+} @else if (store.status() === 'loading' && store.items().length === 0) {
+  <div class="skeleton" aria-hidden="true">
+    @for (row of skeletonRows; track row) {
+      <div class="bone"></div>
+    }
   </div>
+  <p class="sr-only">Loading items</p>
 } @else if (store.status() === 'success' && store.total() === 0) {
-  <p>No results</p>
-} @else if (store.status() === 'success') {
-  <app-items-table />
+  <div class="state">
+    <p>No items match these filters.</p>
+    <button type="button" matButton="outlined" (click)="clearFilters()">Clear all filters</button>
+  </div>
+} @else {
+  <app-items-table [density]="density()" />
 }

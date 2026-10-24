@@ -1,5 +1,5 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Injector, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Injector, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -27,22 +27,15 @@ import { ItemEditDialog } from '../item-edit-dialog/item-edit-dialog';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ItemsTable {
+  readonly density = input<'comfortable' | 'compact'>('comfortable');
+  readonly highlightedId = input<string | null>(null);
+
   protected readonly store = inject(ExplorerStore);
   private readonly dialog = inject(MatDialog);
   private readonly injector = inject(Injector);
 
-  protected readonly displayedColumns = [
-    'name',
-    'restaurantName',
-    'branchName',
-    'category',
-    'price',
-    'available',
-    'lastUpdated',
-    'actions',
-  ];
-
-  protected readonly pageSizeOptions = [10, 25, 50];
+  protected readonly displayedColumns = ['name', 'category', 'price', 'available', 'lastUpdated', 'actions'];
+  protected readonly pageSizeOptions = [10, 25, 50, 100];
 
   protected trackById(_index: number, item: Item): string {
     return item.id;
@@ -64,7 +57,35 @@ export class ItemsTable {
     this.dialog.open(ItemEditDialog, {
       data: { item },
       injector: this.injector,
-      width: '480px',
+      width: '420px',
     });
+  }
+
+  protected relative(iso: string): string {
+    const then = new Date(iso).getTime();
+    if (Number.isNaN(then)) {
+      return iso;
+    }
+    const minutes = Math.round((Date.now() - then) / 60000);
+    const hours = Math.round(minutes / 60);
+    const days = Math.round(hours / 24);
+    if (Math.abs(minutes) < 1) {
+      return 'just now';
+    }
+    if (Math.abs(minutes) < 60) {
+      return minutes === 1 ? '1 minute ago' : `${minutes} minutes ago`;
+    }
+    if (Math.abs(hours) < 24) {
+      return hours === 1 ? '1 hour ago' : `${hours} hours ago`;
+    }
+    if (Math.abs(days) < 30) {
+      return days === 1 ? '1 day ago' : `${days} days ago`;
+    }
+    const months = Math.round(days / 30);
+    if (Math.abs(months) < 12) {
+      return months === 1 ? '1 month ago' : `${months} months ago`;
+    }
+    const years = Math.round(days / 365);
+    return years === 1 ? '1 year ago' : `${years} years ago`;
   }
 }

@@ -1,18 +1,125 @@
-:host {
-  display: block;
-  width: 100%;
+.table-scroll {
+  position: relative;
+  overflow: auto;
+  background: var(--sh-surface);
+  border: 1px solid var(--sh-line);
+  border-radius: var(--sh-radius-panel);
 }
 
-.table-scroll {
-  width: 100%;
-  overflow-x: auto;
+.progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--sh-primary);
+}
+
+.dimmed {
+  opacity: 0.72;
 }
 
 table {
   width: 100%;
 }
 
-.mat-column-actions {
-  width: 72px;
+.mat-mdc-header-cell {
+  color: var(--sh-muted);
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--sh-surface);
+}
+
+.data-row {
+  cursor: pointer;
+}
+
+.data-row:hover {
+  background: var(--sh-tint);
+}
+
+.item-name,
+.item-meta {
+  display: block;
+}
+
+.item-meta {
+  color: var(--sh-muted);
+  font-size: 12px;
+}
+
+.numeric {
   text-align: right;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--sh-available-tint);
+  color: var(--sh-available);
+  font-size: 12px;
+}
+
+.pill.off {
+  background: var(--sh-unavailable-tint);
+  color: var(--sh-unavailable);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.updated {
+  background: var(--sh-tint);
+}
+
+.compact .mat-mdc-cell,
+.compact .mat-mdc-header-cell {
+  padding-block: 4px;
+}
+
+@media (max-width: 720px) {
+  table,
+  .mat-mdc-header-row,
+  .mat-mdc-row,
+  .mat-mdc-header-cell,
+  .mat-mdc-cell {
+    display: block;
+    width: auto;
+    text-align: left;
+  }
+
+  .mat-mdc-header-row {
+    display: none;
+  }
+
+  .data-row {
+    margin: 8px;
+    padding: 8px;
+    border: 1px solid var(--sh-line);
+    border-radius: var(--sh-radius-panel);
+  }
+
+  .mat-mdc-cell {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 0;
+  }
+
+  .mat-mdc-cell::before {
+    content: attr(data-label);
+    color: var(--sh-muted);
+    font-size: 12px;
+  }
+
+  .numeric {
+    text-align: right;
+  }
 }

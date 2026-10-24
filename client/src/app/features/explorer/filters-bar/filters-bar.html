@@ -1,57 +1,100 @@
-<form class="filters" [formGroup]="form">
-  <mat-form-field appearance="outline">
-    <mat-label>Name</mat-label>
-    <input matInput type="text" formControlName="search" autocomplete="off" />
-  </mat-form-field>
+<button type="button" class="filters-toggle" (click)="filtersOpen.set(!filtersOpen())">
+  {{ filtersOpen() ? 'Hide filters' : 'Filters' }}
+</button>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Restaurant</mat-label>
-    <mat-select formControlName="restaurantId">
-      <mat-option [value]="null">All</mat-option>
-      @for (restaurant of store.meta()?.restaurants ?? []; track restaurant.id) {
-        <mat-option [value]="restaurant.id">{{ restaurant.name }}</mat-option>
+<div class="filters-panel" [class.open]="filtersOpen()">
+  <form class="filters" [formGroup]="form">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
+      <mat-label>Search by name</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput type="search" formControlName="search" autocomplete="off" />
+      @if (form.controls.search.value) {
+        <button
+          matIconButton
+          matSuffix
+          type="button"
+          aria-label="Clear search"
+          (click)="clearSearch()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
       }
-    </mat-select>
-  </mat-form-field>
+    </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Branch</mat-label>
-    <mat-select formControlName="branchId">
-      <mat-option [value]="null">All</mat-option>
-      @for (branch of branches(); track branch.id) {
-        <mat-option [value]="branch.id">{{ branch.name }}</mat-option>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Restaurant</mat-label>
+      <mat-select formControlName="restaurantId">
+        <mat-option [value]="null">All restaurants</mat-option>
+        @for (restaurant of store.meta()?.restaurants ?? []; track restaurant.id) {
+          <mat-option [value]="restaurant.id">{{ restaurant.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Branch</mat-label>
+      <mat-select formControlName="branchId">
+        <mat-option [value]="null">All branches</mat-option>
+        @for (branch of branches(); track branch.id) {
+          <mat-option [value]="branch.id">{{ branch.name }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.branchId.disabled) {
+        <mat-hint>Choose a restaurant first</mat-hint>
       }
-    </mat-select>
-  </mat-form-field>
+    </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Category</mat-label>
-    <mat-select formControlName="category">
-      <mat-option [value]="null">All</mat-option>
-      @for (category of store.meta()?.categories ?? []; track category) {
-        <mat-option [value]="category">{{ category }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="category">
+        <mat-option [value]="null">All categories</mat-option>
+        @for (category of store.meta()?.categories ?? []; track category) {
+          <mat-option [value]="category">{{ category }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Availability</mat-label>
-    <mat-select formControlName="available">
-      <mat-option [value]="null">All</mat-option>
-      <mat-option [value]="true">Available</mat-option>
-      <mat-option [value]="false">Unavailable</mat-option>
-    </mat-select>
-  </mat-form-field>
+    <div
+      class="segment"
+      role="radiogroup"
+      aria-label="Availability"
+      (keydown)="onAvailabilityKey($event)"
+    >
+      <button type="button" role="radio" [attr.aria-checked]="store.available() === null" (click)="setAvailable(null)">
+        All
+      </button>
+      <button type="button" role="radio" [attr.aria-checked]="store.available() === true" (click)="setAvailable(true)">
+        Available
+      </button>
+      <button type="button" role="radio" [attr.aria-checked]="store.available() === false" (click)="setAvailable(false)">
+        Unavailable
+      </button>
+    </div>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Min price</mat-label>
-    <input matInput type="number" formControlName="minPrice" autocomplete="off" />
-  </mat-form-field>
+    <div class="prices">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Min price</mat-label>
+        <input matInput type="number" formControlName="minPrice" min="0" step="0.01" autocomplete="off" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Max price</mat-label>
+        <input matInput type="number" formControlName="maxPrice" min="0" step="0.01" autocomplete="off" />
+      </mat-form-field>
+    </div>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Max price</mat-label>
-    <input matInput type="number" formControlName="maxPrice" autocomplete="off" />
-  </mat-form-field>
+    <button type="button" matButton="outlined" (click)="clearAll()">Clear all</button>
+  </form>
+</div>
 
-  <button type="button" mat-stroked-button (click)="reset()">Reset</button>
-</form>
+@if (chips().length > 0) {
+  <div class="chips" aria-label="Active filters">
+    @for (chip of chips(); track chip.key) {
+      <button type="button" class="chip" (click)="removeChip(chip.key)">
+        {{ chip.label }}
+        <mat-icon aria-hidden="true">close</mat-icon>
+        <span class="sr-only">Remove {{ chip.label }}</span>
+      </button>
+    }
+    <button type="button" class="text-button" (click)="clearAll()">Clear all</button>
+  </div>
+}
