@@ -18,8 +18,8 @@ let saveChain = Promise.resolve();
 
 function loadItems() {
   if (!fs.existsSync(DATA_FILE)) {
-    console.error(`Missing ${DATA_FILE}. Run npm run seed from the project root.`);
-    process.exit(1);
+    console.log(`Missing ${DATA_FILE}. Generating data...`);
+    require('./seed').seed();
   }
   items = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
   if (!Array.isArray(items)) {

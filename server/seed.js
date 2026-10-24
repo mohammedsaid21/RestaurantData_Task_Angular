@@ -90,4 +90,8 @@ function seed() {
   console.log(`Wrote ${DATA_FILE}`);
 }
 
-seed();
+module.exports = { seed };
+
+if (require.main === module) {
+  seed();
+}
