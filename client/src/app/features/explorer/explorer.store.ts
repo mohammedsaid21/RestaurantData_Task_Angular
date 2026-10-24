@@ -1,13 +1,15 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { EMPTY, catchError, switchMap, tap } from 'rxjs';
+import { EMPTY, Observable, catchError, switchMap, tap, throwError } from 'rxjs';
 import { ItemsApiService } from '../../core/api/items-api.service';
-import { Item, ItemsQuery, Meta } from '../../core/models/item.model';
+import { Item, ItemPatch, ItemsQuery, Meta } from '../../core/models/item.model';
+import { StatsStore } from '../dashboard/stats.store';
 
 @Injectable()
 export class ExplorerStore {
   private readonly api = inject(ItemsApiService);
+  private readonly statsStore = inject(StatsStore);
 
   readonly search = signal('');
   readonly restaurantId = signal<string | null>(null);
@@ -165,6 +167,52 @@ export class ExplorerStore {
 
   retry(): void {
     this.reloadTick.update((tick) => tick + 1);
+  }
+
+  updateItem(id: string, patch: ItemPatch): Observable<Item> {
+    return this.api.updateItem(id, patch).pipe(
+      tap((updated) => {
+        this.statsStore.load();
+        if (!this.itemMatchesFilters(updated)) {
+          this.reloadTick.update((tick) => tick + 1);
+          return;
+        }
+        this.items.update((items) => items.map((item) => (item.id === id ? updated : item)));
+      }),
+      catchError((err: unknown) => throwError(() => err)),
+    );
+  }
+
+  itemMatchesFilters(item: Item): boolean {
+    const search = this.search().trim().toLowerCase();
+    if (search && !item.name.toLowerCase().includes(search)) {
+      return false;
+    }
+    const restaurantId = this.restaurantId();
+    if (restaurantId && item.restaurantId !== restaurantId) {
+      return false;
+    }
+    const branchId = this.branchId();
+    if (branchId && item.branchId !== branchId) {
+      return false;
+    }
+    const category = this.category();
+    if (category && item.category !== category) {
+      return false;
+    }
+    const available = this.available();
+    if (available !== null && item.available !== available) {
+      return false;
+    }
+    const minPrice = this.minPrice();
+    if (minPrice !== null && item.price < minPrice) {
+      return false;
+    }
+    const maxPrice = this.maxPrice();
+    if (maxPrice !== null && item.price > maxPrice) {
+      return false;
+    }
+    return true;
   }
 
   private readError(err: unknown): string {
