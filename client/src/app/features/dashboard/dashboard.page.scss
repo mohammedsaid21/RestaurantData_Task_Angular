@@ -1,0 +1,30 @@
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.cards mat-card {
+  padding: 16px;
+}
+
+.cards mat-card-content {
+  font: var(--mat-sys-headline-medium);
+  padding-top: 8px;
+}
+
+.chart-section {
+  margin-top: 24px;
+}
+
+.chart-section h2 {
+  margin: 0 0 16px;
+  font: var(--mat-sys-title-large);
+}
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}

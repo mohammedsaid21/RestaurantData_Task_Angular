@@ -1,0 +1,33 @@
+@if (statsStore.status() === 'loading') {
+  <div class="state">
+    <mat-spinner />
+  </div>
+} @else if (statsStore.status() === 'error') {
+  <div class="state">
+    <p>{{ statsStore.error() }}</p>
+    <button type="button" mat-flat-button (click)="statsStore.retry()">Retry</button>
+  </div>
+} @else if (statsStore.stats(); as stats) {
+  <section class="cards">
+    <mat-card>
+      <mat-card-title>Total Menu Items</mat-card-title>
+      <mat-card-content>{{ stats.total }}</mat-card-content>
+    </mat-card>
+    <mat-card>
+      <mat-card-title>Available Items</mat-card-title>
+      <mat-card-content>{{ stats.available }}</mat-card-content>
+    </mat-card>
+    <mat-card>
+      <mat-card-title>Unavailable Items</mat-card-title>
+      <mat-card-content>{{ stats.unavailable }}</mat-card-content>
+    </mat-card>
+    <mat-card>
+      <mat-card-title>Average Item Price</mat-card-title>
+      <mat-card-content>{{ stats.avgPrice | number: '1.2-2' }}</mat-card-content>
+    </mat-card>
+  </section>
+  <section class="chart-section">
+    <h2>Items by category</h2>
+    <app-category-chart [counts]="stats.byCategory" />
+  </section>
+}
