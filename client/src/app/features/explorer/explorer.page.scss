@@ -14,6 +14,7 @@ mat-sidenav-content {
 mat-sidenav {
   width: 420px;
   max-width: 100%;
+  height: 100vh;
   box-shadow: var(--sh-shadow-drawer);
   border-left: 1px solid var(--sh-line);
 }

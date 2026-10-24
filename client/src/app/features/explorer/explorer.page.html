@@ -1,5 +1,5 @@
 <mat-sidenav-container>
-  <mat-sidenav position="end" mode="over" [autoFocus]="true">
+  <mat-sidenav position="end" mode="over" [fixedInViewport]="true" [autoFocus]="true">
     @if (editing(); as item) {
       <app-item-edit-drawer [item]="item" (saved)="onSaved($event)" (cancelled)="closeEditor()" />
     }
