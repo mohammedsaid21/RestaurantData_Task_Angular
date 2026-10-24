@@ -70,6 +70,8 @@ body {
   color-scheme: light;
   margin: 0;
   height: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   background: var(--sh-paper);
   color: var(--sh-ink);
   font-family: var(--sh-font);

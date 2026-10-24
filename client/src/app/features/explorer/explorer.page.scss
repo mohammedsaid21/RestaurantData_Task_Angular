@@ -1,15 +1,19 @@
-mat-sidenav-container {
-  height: auto;
-  overflow: visible;
+:host {
+  display: block;
+  max-width: 100%;
+  min-width: 0;
+}
+
+mat-sidenav-container,
+mat-sidenav-content {
+  max-width: 100%;
+  min-width: 0;
   background: transparent;
 }
 
-mat-sidenav-content {
-  overflow: visible;
-}
-
 mat-sidenav {
-  width: min(420px, 100vw);
+  width: 420px;
+  max-width: 100%;
   box-shadow: var(--sh-shadow-drawer);
   border-left: 1px solid var(--sh-line);
 }
