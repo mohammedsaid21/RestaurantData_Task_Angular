@@ -1,0 +1,16 @@
+{
+  "name": "sharkhood-server",
+  "private": true,
+  "version": "1.0.0",
+  "type": "commonjs",
+  "scripts": {
+    "seed": "node seed.js",
+    "start": "node server.js",
+    "test": "node --test query.test.js"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^10.1.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  }
+}
