@@ -1,3 +1,18 @@
+.panel {
+  margin-top: 16px;
+  padding: 20px 22px 12px;
+  background: var(--sh-surface);
+  border: 1px solid var(--sh-line);
+  border-radius: var(--sh-radius-panel);
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-family: var(--sh-display);
+  font-size: 20px;
+  font-weight: 600;
+}
+
 .chart-canvas {
-  height: 320px;
+  position: relative;
 }

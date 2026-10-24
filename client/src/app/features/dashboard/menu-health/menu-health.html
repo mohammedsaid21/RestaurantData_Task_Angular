@@ -1,0 +1,30 @@
+<section class="health" aria-labelledby="menu-health-title">
+  <div class="total">
+    <p id="menu-health-title">Menu health</p>
+    <p class="figure tabular">{{ stats().total | number }}</p>
+    <p class="caption">Items on the menu</p>
+  </div>
+  <div class="mix">
+    <div
+      class="stack"
+      role="img"
+      [attr.aria-label]="
+        (stats().available | number) +
+        ' available, ' +
+        (stats().unavailable | number) +
+        ' unavailable'
+      "
+    >
+      <span class="available" [style.flex-grow]="stats().available"></span>
+      <span class="unavailable" [style.flex-grow]="stats().unavailable"></span>
+    </div>
+    <p class="legend tabular">
+      <span>{{ stats().available | number }} available ({{ availableShare() | percent: '1.0-0' }})</span>
+      <span>{{ stats().unavailable | number }} unavailable ({{ unavailableShare() | percent: '1.0-0' }})</span>
+    </p>
+  </div>
+  <div class="average">
+    <p>Average price</p>
+    <p class="figure tabular">{{ stats().avgPrice | number: '1.2-2' }}</p>
+  </div>
+</section>

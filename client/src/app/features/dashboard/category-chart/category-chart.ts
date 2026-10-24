@@ -1,6 +1,36 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { ChartData, ChartOptions } from 'chart.js';
+import { Chart, ChartData, ChartOptions, Plugin } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import { CategoryCount } from '../../../core/models/item.model';
+
+const valueLabels: Plugin<'bar'> = {
+  id: 'categoryValueLabels',
+  afterDatasetsDraw(chart) {
+    const { ctx } = chart;
+    const meta = chart.getDatasetMeta(0);
+    const dataset = chart.data.datasets[0];
+    ctx.save();
+    ctx.fillStyle = '#11262c';
+    ctx.font = '12px Instrument Sans, Segoe UI, sans-serif';
+    ctx.textBaseline = 'middle';
+    meta.data.forEach((bar, index) => {
+      const value = dataset.data[index];
+      const point = bar as { x: number; y: number };
+      ctx.fillText(String(value), point.x + 8, point.y);
+    });
+    ctx.restore();
+  },
+};
+
+Chart.register(valueLabels);
+
+function readToken(name: string, fallback: string): string {
+  if (typeof document === 'undefined') {
+    return fallback;
+  }
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return value || fallback;
+}
 
 @Component({
   selector: 'app-category-chart',
@@ -10,35 +40,44 @@ import { BaseChartDirective } from 'ng2-charts';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CategoryChart {
-  readonly counts = input.required<{ category: string; count: number }[]>();
+  readonly counts = input.required<CategoryCount[]>();
 
-  readonly chartType = 'bar' as const;
+  protected readonly sorted = computed(() => this.counts().slice().sort((a, b) => b.count - a.count));
 
-  readonly labels = computed(() => this.counts().map((count) => count.category));
+  protected readonly chartType = 'bar' as const;
 
-  readonly datasets = computed(() => [
-    {
-      data: this.counts().map((count) => count.count),
-      label: 'Items',
-    },
-  ]);
+  protected readonly chartHeight = computed(() => Math.max(220, this.sorted().length * 36));
 
-  readonly chartData = computed<ChartData<'bar'>>(() => ({
-    labels: this.labels(),
-    datasets: this.datasets(),
+  protected readonly chartData = computed<ChartData<'bar'>>(() => ({
+    labels: this.sorted().map((count) => count.category),
+    datasets: [
+      {
+        data: this.sorted().map((count) => count.count),
+        label: 'Items',
+        backgroundColor: readToken('--sh-primary', '#0e5a63'),
+        borderRadius: 4,
+        maxBarThickness: 18,
+        categoryPercentage: 0.7,
+        barPercentage: 0.85,
+      },
+    ],
   }));
 
-  readonly options: ChartOptions<'bar'> = {
+  protected readonly options: ChartOptions<'bar'> = {
+    indexAxis: 'y',
     responsive: true,
     maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false,
-      },
-    },
+    layout: { padding: { right: 48 } },
+    plugins: { legend: { display: false } },
     scales: {
-      y: {
+      x: {
         beginAtZero: true,
+        grid: { color: readToken('--sh-line', '#d9e2e4') },
+        ticks: { color: readToken('--sh-muted', '#5b7077'), precision: 0 },
+      },
+      y: {
+        grid: { display: false },
+        ticks: { color: readToken('--sh-ink', '#11262c') },
       },
     },
   };

@@ -1,3 +1,29 @@
-<div class="chart-canvas">
-  <canvas baseChart [type]="chartType" [data]="chartData()" [options]="options"></canvas>
-</div>
+<section class="panel" aria-labelledby="category-heading">
+  <h2 id="category-heading">Items by category</h2>
+  <div class="chart-canvas" [style.height.px]="chartHeight()">
+    <canvas
+      baseChart
+      [type]="chartType"
+      [data]="chartData()"
+      [options]="options"
+      aria-label="Horizontal bar chart of item counts by category"
+    ></canvas>
+  </div>
+  <table class="sr-only">
+    <caption>Items by category</caption>
+    <thead>
+      <tr>
+        <th scope="col">Category</th>
+        <th scope="col">Items</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of sorted(); track row.category) {
+        <tr>
+          <th scope="row">{{ row.category }}</th>
+          <td>{{ row.count }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</section>

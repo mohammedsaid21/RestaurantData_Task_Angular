@@ -1,0 +1,73 @@
+.health {
+  display: grid;
+  grid-template-columns: minmax(160px, 220px) minmax(0, 1fr) minmax(140px, 180px);
+  gap: 28px;
+  align-items: center;
+  padding: 22px 24px;
+  background: var(--sh-primary);
+  color: #f3f6f6;
+  border-radius: var(--sh-radius-panel);
+}
+
+p {
+  margin: 0;
+}
+
+.figure {
+  margin-top: 4px;
+  font-family: var(--sh-display);
+  font-size: 44px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.caption,
+.legend,
+.average p:first-child,
+.total p:first-child {
+  color: #d5e6e8;
+  font-size: 14px;
+}
+
+.stack {
+  display: flex;
+  height: 16px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 16%);
+}
+
+.available {
+  background: #8fd7b0;
+}
+
+.unavailable {
+  background: #f0cb7a;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-top: 10px;
+}
+
+.average {
+  text-align: right;
+}
+
+.average .figure {
+  font-size: 28px;
+}
+
+@media (max-width: 720px) {
+  .health {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .average {
+    text-align: left;
+  }
+}
