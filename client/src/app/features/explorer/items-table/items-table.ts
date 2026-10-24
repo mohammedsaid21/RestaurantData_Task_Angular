@@ -1,10 +1,13 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
+import { map } from 'rxjs';
 import { Item } from '../../../core/models/item.model';
 import { ExplorerStore } from '../explorer.store';
 
@@ -21,6 +24,12 @@ export class ItemsTable {
   readonly editItem = output<Item>();
 
   protected readonly store = inject(ExplorerStore);
+  protected readonly narrow = toSignal(
+    inject(BreakpointObserver)
+      .observe('(max-width: 720px)')
+      .pipe(map((state) => state.matches)),
+    { initialValue: typeof matchMedia === 'function' && matchMedia('(max-width: 720px)').matches },
+  );
 
   protected readonly displayedColumns = ['name', 'category', 'price', 'available', 'lastUpdated', 'actions'];
   protected readonly pageSizeOptions = [10, 25, 50, 100];
@@ -39,6 +48,18 @@ export class ItemsTable {
 
   protected onPage(event: PageEvent): void {
     this.store.setPage(event.pageIndex + 1, event.pageSize);
+  }
+
+  protected onMobileSort(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    const [sortBy, sortOrder] = value.split(':');
+    if (sortBy !== 'name' && sortBy !== 'price' && sortBy !== 'lastUpdated') {
+      throw new Error(`Cannot sort by ${sortBy}`);
+    }
+    if (sortOrder !== 'asc' && sortOrder !== 'desc') {
+      throw new Error(`Cannot sort ${sortOrder}`);
+    }
+    this.store.setSort(sortBy, sortOrder);
   }
 
   protected edit(item: Item): void {

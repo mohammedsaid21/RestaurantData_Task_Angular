@@ -129,7 +129,19 @@ mat-icon {
 
   nav a {
     flex: 1;
+    min-width: 0;
     justify-content: flex-start;
     padding-inline: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .label {
+    display: none;
+  }
+
+  nav a {
+    justify-content: center;
+    padding-inline: 0;
   }
 }

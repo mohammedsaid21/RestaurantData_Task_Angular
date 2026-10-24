@@ -2,6 +2,58 @@
   @if (store.status() === 'loading') {
     <div class="progress" aria-hidden="true"></div>
   }
+  @if (narrow()) {
+    <label class="mobile-sort">
+      Sort
+      <select [value]="store.sortBy() + ':' + store.sortOrder()" (change)="onMobileSort($event)">
+        <option value="name:asc">Name, A to Z</option>
+        <option value="name:desc">Name, Z to A</option>
+        <option value="price:asc">Price, low to high</option>
+        <option value="price:desc">Price, high to low</option>
+        <option value="lastUpdated:desc">Newest update</option>
+        <option value="lastUpdated:asc">Oldest update</option>
+      </select>
+    </label>
+    <ul class="cards">
+      @for (item of store.items(); track item.id) {
+        <li
+          class="card"
+          tabindex="0"
+          [class.updated]="highlightedId() === item.id"
+          (click)="edit(item)"
+          (keydown.enter)="edit(item)"
+        >
+          <div class="card-title">
+            <span class="item-name">{{ item.name }}</span>
+            <span class="item-meta">{{ item.restaurantName }} · {{ item.branchName }}</span>
+          </div>
+          <p><span>Category</span> {{ item.category }}</p>
+          <p class="tabular"><span>Price</span> {{ item.price | number: '1.2-2' }}</p>
+          <p>
+            <span>Status</span>
+            <span class="pill" [class.off]="!item.available">
+              <span class="dot" aria-hidden="true"></span>
+              {{ item.available ? 'Available' : 'Unavailable' }}
+            </span>
+          </p>
+          <p class="tabular">
+            <span>Updated</span>
+            <time [attr.datetime]="item.lastUpdated" [attr.title]="item.lastUpdated | date: 'medium'">
+              {{ relative(item.lastUpdated) }}
+            </time>
+          </p>
+          <button
+            matIconButton
+            type="button"
+            [attr.aria-label]="'Edit ' + item.name"
+            (click)="$event.stopPropagation(); edit(item)"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+        </li>
+      }
+    </ul>
+  } @else {
   <table
     mat-table
     [dataSource]="store.items()"
@@ -80,6 +132,7 @@
       (keydown.enter)="edit(row)"
     ></tr>
   </table>
+  }
 </div>
 
 <mat-paginator

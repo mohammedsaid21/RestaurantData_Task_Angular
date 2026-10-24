@@ -1,5 +1,11 @@
 mat-sidenav-container {
+  height: auto;
+  overflow: visible;
   background: transparent;
+}
+
+mat-sidenav-content {
+  overflow: visible;
 }
 
 mat-sidenav {
