@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, Injector, computed, inject, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Item } from '../../core/models/item.model';
 import { PageHeader } from '../../layout/page-header/page-header';
@@ -11,7 +11,7 @@ import { ItemsTable } from './items-table/items-table';
 
 @Component({
   selector: 'app-explorer-page',
-  imports: [MatButtonModule, MatSidenavModule, PageHeader, FiltersBar, ItemsTable, ItemEditDrawer],
+  imports: [MatButtonModule, PageHeader, FiltersBar, ItemsTable],
   templateUrl: './explorer.page.html',
   styleUrl: './explorer.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,10 +21,10 @@ export class ExplorerPage {
   protected readonly store = inject(ExplorerStore);
   protected readonly density = signal<'comfortable' | 'compact'>('comfortable');
   protected readonly skeletonRows = [0, 1, 2, 3, 4, 5, 6, 7];
-  protected readonly editing = signal<Item | null>(null);
   protected readonly highlightedId = signal<string | null>(null);
   private readonly filters = viewChild(FiltersBar);
-  private readonly drawer = viewChild.required(MatSidenav);
+  private readonly dialog = inject(MatDialog);
+  private readonly injector = inject(Injector);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
   private highlightTimer: ReturnType<typeof setTimeout> | null = null;
@@ -63,17 +63,26 @@ export class ExplorerPage {
     this.filters()?.clearAll();
   }
 
-  protected closeEditor(): void {
-    void this.drawer().close();
-  }
-
   protected openEditor(item: Item): void {
-    this.editing.set(item);
-    void this.drawer().open();
+    const ref = this.dialog.open(ItemEditDrawer, {
+      data: item,
+      injector: this.injector,
+      width: '420px',
+      maxWidth: '100vw',
+      height: '100vh',
+      position: { top: '0', right: '0' },
+      panelClass: 'item-editor-panel',
+      autoFocus: 'first-tabbable',
+      restoreFocus: true,
+    });
+    ref.afterClosed().subscribe((updated) => {
+      if (updated) {
+        this.onSaved(updated);
+      }
+    });
   }
 
-  protected onSaved(item: Item): void {
-    void this.drawer().close();
+  private onSaved(item: Item): void {
     this.snackBar.open('Item updated', undefined, { duration: 2500 });
     this.highlightedId.set(item.id);
     if (this.highlightTimer) {

@@ -1,10 +1,3 @@
-<mat-sidenav-container>
-  <mat-sidenav position="end" mode="over" [fixedInViewport]="true" [autoFocus]="true">
-    @if (editing(); as item) {
-      <app-item-edit-drawer [item]="item" (saved)="onSaved($event)" (cancelled)="closeEditor()" />
-    }
-  </mat-sidenav>
-  <mat-sidenav-content>
 <app-page-header
   title="Explorer"
   summary="Find one item among the full menu, then correct its price or availability."
@@ -49,5 +42,3 @@
     (editItem)="openEditor($event)"
   />
 }
-  </mat-sidenav-content>
-</mat-sidenav-container>
