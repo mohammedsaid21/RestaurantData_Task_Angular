@@ -1,0 +1,18 @@
+<app-filters-bar />
+
+<p class="results">Results: {{ store.total() }}</p>
+
+@if (store.status() === 'loading') {
+  <div class="state">
+    <mat-spinner />
+  </div>
+} @else if (store.status() === 'error') {
+  <div class="state">
+    <p class="error">{{ store.error() }}</p>
+    <button type="button" mat-flat-button (click)="store.retry()">Retry</button>
+  </div>
+} @else if (store.status() === 'success' && store.total() === 0) {
+  <p>No results</p>
+} @else if (store.status() === 'success') {
+  <app-items-table />
+}

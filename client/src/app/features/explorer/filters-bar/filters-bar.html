@@ -1,0 +1,57 @@
+<form class="filters" [formGroup]="form">
+  <mat-form-field appearance="outline">
+    <mat-label>Name</mat-label>
+    <input matInput type="text" formControlName="search" autocomplete="off" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Restaurant</mat-label>
+    <mat-select formControlName="restaurantId">
+      <mat-option [value]="null">All</mat-option>
+      @for (restaurant of store.meta()?.restaurants ?? []; track restaurant.id) {
+        <mat-option [value]="restaurant.id">{{ restaurant.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Branch</mat-label>
+    <mat-select formControlName="branchId">
+      <mat-option [value]="null">All</mat-option>
+      @for (branch of branches(); track branch.id) {
+        <mat-option [value]="branch.id">{{ branch.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Category</mat-label>
+    <mat-select formControlName="category">
+      <mat-option [value]="null">All</mat-option>
+      @for (category of store.meta()?.categories ?? []; track category) {
+        <mat-option [value]="category">{{ category }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Availability</mat-label>
+    <mat-select formControlName="available">
+      <mat-option [value]="null">All</mat-option>
+      <mat-option [value]="true">Available</mat-option>
+      <mat-option [value]="false">Unavailable</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Min price</mat-label>
+    <input matInput type="number" formControlName="minPrice" autocomplete="off" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Max price</mat-label>
+    <input matInput type="number" formControlName="maxPrice" autocomplete="off" />
+  </mat-form-field>
+
+  <button type="button" mat-stroked-button (click)="reset()">Reset</button>
+</form>
