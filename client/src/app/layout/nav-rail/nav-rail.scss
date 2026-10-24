@@ -1,0 +1,135 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 232px;
+  flex: 0 0 232px;
+  box-sizing: border-box;
+  padding: 20px 12px;
+  background: var(--sh-surface);
+  border-right: 1px solid var(--sh-line);
+}
+
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 10px;
+  color: var(--sh-ink);
+  font-family: var(--sh-display);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+}
+
+.mark {
+  display: none;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--sh-radius);
+  background: var(--sh-primary);
+  color: var(--sh-surface);
+  font-size: 16px;
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 8px 10px;
+  border-radius: var(--sh-radius);
+  border-left: 3px solid transparent;
+  color: var(--sh-ink);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+nav a.active {
+  background: var(--sh-tint);
+  border-left-color: var(--sh-primary);
+}
+
+mat-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  color: var(--sh-primary);
+}
+
+@media (max-width: 1024px) {
+  :host {
+    width: 72px;
+    flex-basis: 72px;
+    align-items: center;
+    padding-inline: 8px;
+  }
+
+  .word {
+    display: none;
+  }
+
+  .mark {
+    display: inline-flex;
+  }
+
+  .label {
+    display: none;
+  }
+
+  nav,
+  nav a {
+    width: 100%;
+  }
+
+  nav a {
+    justify-content: center;
+    padding-inline: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  :host {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    flex-basis: auto;
+    gap: 8px;
+    padding: 8px 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--sh-line);
+  }
+
+  nav {
+    flex-direction: row;
+    flex: 1;
+  }
+
+  .word {
+    display: none;
+  }
+
+  .mark {
+    display: inline-flex;
+  }
+
+  .label {
+    display: inline;
+  }
+
+  nav a {
+    flex: 1;
+    justify-content: flex-start;
+    padding-inline: 8px;
+  }
+}
