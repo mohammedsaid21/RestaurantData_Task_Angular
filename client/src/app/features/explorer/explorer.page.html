@@ -14,7 +14,7 @@
 
 <div class="results">
   <p aria-live="polite">{{ rangeLabel() }}</p>
-  <div class="segment" role="radiogroup" aria-label="Row density">
+  <div class="segment" role="radiogroup" aria-label="Row density" (keydown)="onDensityKey($event)">
     <button type="button" role="radio" [attr.aria-checked]="density() === 'comfortable'" (click)="setDensity('comfortable')">
       Comfortable
     </button>

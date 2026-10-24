@@ -51,6 +51,14 @@ export class ExplorerPage {
     this.density.set(density);
   }
 
+  protected onDensityKey(event: KeyboardEvent): void {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
+      return;
+    }
+    event.preventDefault();
+    this.density.set(this.density() === 'comfortable' ? 'compact' : 'comfortable');
+  }
+
   protected clearFilters(): void {
     this.filters()?.clearAll();
   }

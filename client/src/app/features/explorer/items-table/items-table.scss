@@ -79,6 +79,21 @@ table {
   background: var(--sh-tint);
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .updated {
+    animation: row-flash 1.5s ease;
+  }
+}
+
+@keyframes row-flash {
+  from {
+    background: var(--sh-tint);
+  }
+  to {
+    background: transparent;
+  }
+}
+
 .compact .mat-mdc-cell,
 .compact .mat-mdc-header-cell {
   padding-block: 4px;

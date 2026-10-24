@@ -116,6 +116,12 @@ About two hours on 24 October 2026. The scaffold and API were committed around 1
 - An index for name search instead of scanning the full array on every request.
 - OpenAPI for the query parameters.
 
+## UI design notes
+
+The interface is an internal operations tool. Color, type, and shape live as `--sh-*` variables in `client/src/styles.scss` and are mapped onto Angular Material with `mat.theme` and `mat.theme-overrides` (deep teal primary, 6px controls, 10px panels). Page titles use Bricolage Grotesque. Everything else uses Instrument Sans, with system font fallbacks. Both are loaded from Google Fonts.
+
+The shell is a left navigation rail (`app-nav-rail`) that becomes an icon rail below 1024px and a top bar below 720px. The dashboard leads with one menu-health panel (total, available versus unavailable, average price) and a horizontal category chart. The explorer keeps server-side filtering: a toolbar, removable chips, a paged table, and a right-hand edit drawer that still calls `ExplorerStore.updateItem`. A saved row is highlighted for 1.5 seconds, and that motion is skipped when `prefers-reduced-motion` is set.
+
 ## Architecture
 
 ```
